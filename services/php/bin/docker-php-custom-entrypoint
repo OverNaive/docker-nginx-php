@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+set -e
+
+if [ -f "/etc/supervisord.conf" ]; then
+  /usr/bin/supervisord -c /etc/supervisord.conf
+fi
+
+php-fpm

@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+    nginx:
+        image: nginx:alpine
+        volumes:
+            - ./www:/home/www-data
+            - ./services/nginx/log:/var/log/nginx
+            - ./services/nginx/config/conf.d:/etc/nginx/conf.d
+            - ./services/nginx/config/nginx.conf:/etc/nginx/nginx.conf
+        working_dir: /home/www-data
+        ports:
+            - 888:80
+        depends_on:
+            - php
+        restart: always
+        container_name: nginx
+
+    php:
+        image: overnaive/php-fpm:7.4-alpine
+        volumes:
+            - ./www:/home/www-data
+            - ./services/php/log/supervisor:/var/log/supervisor
+            - ./services/php/config/conf.d/custom-php.ini:/usr/local/etc/php/conf.d/custom-php.ini
+            - ./services/php/config/php-fpm.d/custom-php-fpm.conf:/usr/local/etc/php-fpm.d/custom-php-fpm.conf
+            - ./services/php/config/supervisor.d:/etc/supervisor.d
+            - ./services/php/bin/docker-php-custom-entrypoint:/usr/local/bin/docker-php-custom-entrypoint
+        working_dir: /home/www-data
+        command: docker-php-custom-entrypoint
+        restart: always
+        container_name: php
